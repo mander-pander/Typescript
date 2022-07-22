@@ -1,17 +1,25 @@
 // Class constructors start with uppercase
-class Department {
+abstract class Department {
+    static fiscalYear = 2022;
     // private id: string;
     // private name: string;
     protected employees: string[] = [];
 
-    constructor(private readonly id: string, public name: string) {
+    constructor(protected readonly id: string, public name: string) {
         // this.id = id
         // this.name = n;
+        //cannot access static fiscal year here, this refers to instances based on the class
+        //static should be detached from instances
+        // console.log(Department.fiscalYear);
+        //that will work however
     }
 
-    describe(this: Department) {
-        console.log(`Department (${this.id}): ${this.name}`);
+    static createEmployee(name: string) {
+        return {name: name};
     }
+
+    abstract describe(this: Department): void;
+    //all instances based on Department class must now include this abstract
 
     addEmployee(employee: string) {
         // this.id = 'd2';
@@ -31,10 +39,15 @@ class ITDepartment extends Department {
         super(id, 'IT');
         this.admins = admins;
     }
+
+    describe() {
+        console.log('IT Department -ID: ' + this.id)
+    }
 }
 
 class AccountingDepartment extends Department {
     private lastReport: string;
+    private static instance: AccountingDepartment;
 
     get mostRecentReport() {
         if(this.lastReport) {
@@ -51,9 +64,21 @@ class AccountingDepartment extends Department {
         this.addReport(value);
     }
 
-    constructor(id: string, private reports: string[]) {
+    private constructor(id: string, private reports: string[]) {
       super(id, 'Accounting');
       this.lastReport = reports[0];
+    }
+
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new AccountingDepartment('d1', []);
+        return this.instance;
+    }
+
+    describe() {
+        console.log('Accounting Department - ID: ' + this.id)
     }
 
     addEmployee(name: string) {
@@ -73,12 +98,19 @@ class AccountingDepartment extends Department {
     }
   }
 
+const employee1 = Department.createEmployee('Scott');
+console.log(employee1, Department.fiscalYear);
+
 const security = new ITDepartment('d2', ['Amanda']);
 
 security.describe();
 console.log(security);
 
-const accounting = new AccountingDepartment('d1', []);
+// const accounting = new AccountingDepartment('d1', []);
+const accounting = AccountingDepartment.getInstance();
+const accounting2 = AccountingDepartment.getInstance();
+//creates the same object based off of the same instance
+console.log(accounting, accounting2);
 
 // console.log(accounting.mostRecentReport);
 // no reports to show here
