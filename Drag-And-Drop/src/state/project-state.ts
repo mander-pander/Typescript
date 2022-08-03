@@ -1,4 +1,5 @@
-namespace App {
+    import { Project, ProjectStatus } from '../models/project-model.js';
+
     //Project state management
     type Listener<T> = (items: T[]) => void;
 
@@ -51,4 +52,4 @@ namespace App {
 
     //initializing global state
     export const projectState = ProjectState.getInstance();
-}
+//how often does this run? it only runs once even though it's getting imported in multiple files

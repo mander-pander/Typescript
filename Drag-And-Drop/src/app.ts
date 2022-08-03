@@ -1,8 +1,9 @@
-/// <reference path="./components/project-input.ts" />
-/// <reference path="./components/project-list.ts" />
+import { ProjectInput } from './components/project-input.js';
+import { ProjectList } from './components/project-list.js';
 
-namespace App {
-    new ProjectInput();
-    new ProjectList('active');
-    new ProjectList('finished');
-}
+//can also import * instead of { ProjectList } and use dot notation to avoid name clashing
+//default exports also remove curly braces, this is nice if you have one thing per file
+
+new ProjectInput();
+new ProjectList('active');
+new ProjectList('finished');
