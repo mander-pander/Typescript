@@ -16,7 +16,6 @@ class Project {
     }
 }
 
-
 //Project state management
 type Listener<T> = (items: T[]) => void;
 
@@ -137,6 +136,35 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     abstract renderContent(): void;
 }
 
+//ProjectItem class
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+    private project: Project;
+
+    get persons() {
+        if (this.project.people === 1) {
+            return '1 person';
+        } else {
+            return `${this.project.people} persons`
+        }
+    }
+
+    constructor(hostId: string, project: Project) {
+        super('single-project', hostId, false, project.id);
+        this.project = project;
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure() {}
+
+    renderContent() {
+        this.element.querySelector('h2')!.textContent = this.project.title;
+        this.element.querySelector('h3')!.textContent = this.persons + ' assigned';
+        this.element.querySelector('p')!.textContent = this.project.description;
+    }
+}
+
 //Project List Class
 class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
     assignedProjects: Project[];
@@ -144,8 +172,6 @@ class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
     constructor(private type: 'active' | 'finished') {
         super('project-list', 'app', false, `${type}-projects`);
         this.assignedProjects = [];
-
-
 
         projectState.addListener((projects: Project[]) => {
             const relevantPrjs = projects.filter(prj => {
@@ -165,9 +191,7 @@ class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
         const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
         listEl.innerHTML = '';
         for (const prjItem of this.assignedProjects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem);
+            new ProjectItem(this.element.querySelector('ul')!.id, prjItem);
         }
     }
 
